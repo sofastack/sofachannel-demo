@@ -31,19 +31,99 @@
             <artifactId>fastjson</artifactId>
         </dependency>
         <!-- 这里添加动态模块相关依赖 -->
-
-
-
-
-
-
-
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>sofa-ark-springboot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>sofa-ark-all</artifactId>
+                    <groupId>com.alipay.sofa</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>sofa-ark-spi</artifactId>
+                    <groupId>com.alipay.sofa</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>sofa-ark-exception</artifactId>
+                    <groupId>com.alipay.sofa</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>sofa-ark-common</artifactId>
+                    <groupId>com.alipay.sofa</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>sofa-ark-api</artifactId>
+                    <groupId>com.alipay.sofa</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>sofa-ark-compatible-springboot1</artifactId>
+                    <groupId>com.alipay.sofa</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>sofa-ark-all</artifactId>
+            <version>${sofa.ark.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>sofa-ark-api</artifactId>
+            <version>${sofa.ark.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>logback-classic</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>logback-core</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alipay.sofa</groupId>-->
+<!--            <artifactId>web-ark-plugin</artifactId>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>sofaboot-ark-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>hessian</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <!-- 这里配置动态模块打包插件 -->
-
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>target</outputDirectory>
+                    <classifier>ark-biz</classifier>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
