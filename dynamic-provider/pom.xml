@@ -10,34 +10,51 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dynamic-provider</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <dependencies>
         <dependency>
             <groupId>io.sofastack</groupId>
             <artifactId>dynamic-facade</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>runtime-sofa-boot-plugin</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>healthcheck-sofa-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <artifactId>curator-client</artifactId>
-            <groupId>org.apache.curator</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>curator-framework</artifactId>
-            <groupId>org.apache.curator</groupId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <!--这里添加ark 打包插件-->
-
+            <plugin>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>sofa-ark-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skipArkExecutable>true</skipArkExecutable>
+                    <outputDirectory>./target</outputDirectory>
+                    <bizName>dynamic-provider</bizName>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

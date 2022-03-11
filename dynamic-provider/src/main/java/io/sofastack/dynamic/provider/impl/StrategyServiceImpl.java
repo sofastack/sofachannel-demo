@@ -5,6 +5,7 @@ import io.sofastack.dynamic.facade.StrategyService;
 import io.sofastack.dynamic.model.ProductInfo;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,6 +19,8 @@ import java.util.List;
 public class StrategyServiceImpl implements StrategyService {
     @Override
     public List<ProductInfo> strategy(List<ProductInfo> products) {
+        Collections.sort(products, (m, n) -> n.getOrderCount() - m.getOrderCount());
+        products.stream().forEach(p -> p.setName(p.getName()+"("+p.getOrderCount()+")"));
         return products;
     }
 }

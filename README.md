@@ -11,24 +11,18 @@
 从 github 上将 demo 工程克隆到本地
 
 ```bash
-git clone https://github.com/caojie09/sofachannel-demo.git
+git clone https://github.com/sofastack/sofachannel-demo.git
 ```
 
 然后将工程导入到 IDEA 或者 eclipse，打开工程后，工程目录结构如下：
 
 ```bash
-├── conf
-│   └── ark
-│       ├── bootstrap.properties
-│       └── log
-│           └── logback-conf.xml
 ├── dynamic-facade
 ├── dynamic-provider
 ├── dynamic-stock-mng
 └── pom.xml
 ```
 
-* conf/ark 目录用于配置 ark 启动读取的变量
 * dynamic-facade 定义了一个 Java 接口 io.sofastack.dynamic.facade.StrategyService，该接口用于对传入的商品列表进排序并返回
 * dynamic-provider 实现了 dynamic-facade 定义的接口，并将实现类发布成一个服务
 * dynamic-stock-mng 宿主应用，提供一个 web 页面，用于展示实验效果
@@ -69,7 +63,7 @@ git clone https://github.com/caojie09/sofachannel-demo.git
 
 ### 3、构建宿主应用
 
-在已下载下来的工程中，dynamic-stock-mng 作为实验的宿主应用工程模型。通过此步骤，将 dynamic-stock-mng  构建成为动态模块的宿主应用。
+在已下载下来的工程中，dynamic-stock-mng 作为实验的宿主应用工程模型。通过此步骤，将 dynamic-stock-mng  构建成为动态模块的宿主应用。在SOFAArk2.0之后，宿主应用已经与普通应用并无差别，主要体现在下面会介绍到的宿主应用的打包方式、构建产物和启动方式。
 
 #### step1 : 引入动态模块依赖
 
@@ -78,60 +72,30 @@ git clone https://github.com/caojie09/sofachannel-demo.git
 
 ![image.png](https://gw.alipayobjects.com/mdn/rms_565baf/afts/img/A*lM_1SoNIXIYAAAAAAAAAAABkARQnAQ)
 
-* SOFAArk 相关依赖
-
-    ```xml
-    <dependency>
-        <groupId>com.alipay.sofa</groupId>
-        <artifactId>sofa-ark-springboot-starter</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.alipay.sofa</groupId>
-        <artifactId>web-ark-plugin</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>io.sofastack</groupId>
-        <artifactId>dynamic-provider</artifactId>
-        <version>1.0.0</version>
-        <classifier>ark-biz</classifier>
-    </dependency>
-    ```
-    
 * 宿主应用打包插件
 
     ```xml
-    <plugin>
-        <groupId>com.alipay.sofa</groupId>
-        <artifactId>sofa-ark-maven-plugin</artifactId>
-        <executions>
-            <execution>
-                <id>default-cli</id>
-                <goals>
-                    <goal>repackage</goal>
-                </goals>
-            </execution>
-        </executions>
-        <configuration>
-            <priority>100</priority>
-            <baseDir>../</baseDir>
-            <bizName>stock-mng</bizName>
-        </configuration>
-    </plugin>
+        <plugins>
+            <!-- 这里配置动态模块打包插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>target</outputDirectory>
+                    <classifier>ark-biz</classifier>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     ```
 
-#### step2 : 宿主应用配置
-
-* 动态模块配置
- 
-    在当前项目的根目录 /conf/ark/bootstrap.properties 配置文件中添加配置如下：
-    
-    ```properties
-    # 日志根目录
-    logging.path=./logs
-    # 宿主应用名
-    com.alipay.sofa.ark.master.biz=stock-mng
-    ```
-    com.alipay.sofa.ark.master.biz 配置项为指定的动态模块宿主应用的名称，需与宿主应用打包插件中的 bizName 配置项保持一致。
 ### 4、打包 & 启动宿主应用
 
 #### 执行 mvn clean package
@@ -140,18 +104,9 @@ git clone https://github.com/caojie09/sofachannel-demo.git
 
 ![image.png](https://gw.alipayobjects.com/mdn/rms_c69e1f/afts/img/A*fbgOSpPdAIkAAAAAAAAAAABkARQnAQ)
 
-dynamic-stock-mng 会被打包成一个 ark biz 可执行包，如下图所示：
-
-![image.png](https://gw.alipayobjects.com/mdn/rms_c69e1f/afts/img/A*11DgTaU4BhMAAAAAAAAAAABkARQnAQ)
-
 
 #### 启动宿主应用
-
-```bash
-rm -rf ~/dynamic-stock-mng*
-cp dynamic-stock-mng/target/dynamic-stock-mng-1.0.0-ark-executable.jar ~/
-java -jar ~/dynamic-stock-mng-1.0.0-ark-executable.jar
-```
+SOFAArk 2.0之后宿主应用可以直接启动，可以在IDE里增加`-Dsofa.ark.embed.enable=true` 启动参数，直接启动 StockMngApplication 类。
 
 启动成功之后日志信息如下：
 
@@ -183,6 +138,11 @@ public class StrategyServiceImpl implements StrategyService {
 
 ```xml
 <version>2.0.0</version>
+```
+
+最后，由于本Demo未引入web-ark-plugin，所以每个模块会启动一个新的tomcat实例，所以需要更改tomcat端口
+```properties
+server.port=8802
 ```
 
 配置完成之后，执行 mvn clean package 进行打包，此时可以打包出新版本 dynamic-provider ark biz包，如下图所示：
